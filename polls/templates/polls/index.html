@@ -1,3 +1,16 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'polls/style.css' %}">
+
+
+<h1>{{ message }}</h1>
+<h2>You have visited the Polls page {{ visit_count }} times.</h2>
+
+{% if last_poll %}
+    <h3>Last poll viewed: {{ last_poll.question_text }}</h3>
+{% endif %}
+
+
 {% if latest_question_list %}
     <ul>
     {% for question in latest_question_list %}
@@ -6,4 +19,24 @@
     </ul>
 {% else %}
     <p>No polls are available.</p>
+{% endif %}
+
+
+{% if user.is_authenticated %}
+
+    <p>Logged in as {{ user.username }}</p>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit">Logout</button>
+    </form>
+
+{% else %}
+
+    <form method="get" action="{% url 'login' %}">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit">Login</button>
+    </form>
+
 {% endif %}

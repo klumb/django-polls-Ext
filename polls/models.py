@@ -1,6 +1,9 @@
 import datetime
 from django.db import models
 from django.utils import timezone
+from django.contrib import admin
+from django.conf import settings
+
 
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
@@ -8,6 +11,13 @@ class Question(models.Model):
     # ...
     def __str__(self):
         return self.question_text
+
+    #...
+    @admin.display(
+        boolean=True,
+        ordering="pub_date",
+        description="Published recently?",
+    )
 
     def was_published_recently(self):
         now = timezone.now()
@@ -20,4 +30,20 @@ class Choice(models.Model):
     # ...
     def __str__(self):
         return self.choice_text
+
+class Comment(models.Model):
+    question = models.ForeignKey(
+        Question,
+        on_delete=models.CASCADE
+    )
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+
+    text = models.TextField()
+
+    def __str__(self):
+        return self.text
 
